@@ -418,7 +418,7 @@
    SHARED SECTION STYLES
 ───────────────────────────────────────────────────────── */
 .section {
-  padding: 100px 32px;
+  padding: 50px 32px;
 }
 
 .sectionAlt {
@@ -437,7 +437,6 @@
   color: var(--accent);
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin-bottom: 12px;
 }
 
 .sectionTitle {
@@ -1150,4 +1149,62 @@
   .projectCard {
     padding: 28px 20px;
   }
+}
+
+.formError {
+  font-size: 0.85rem;
+  color: #e05c7a;
+  background: rgba(224, 92, 122, 0.08);
+  border: 1px solid rgba(224, 92, 122, 0.25);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: -4px;
+}
+
+.btnLoading {
+  opacity: 0.75;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.formInput:disabled,
+.formTextarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Hero Quote ─── */
+.heroQuote {
+  display: inline-block;
+  margin-top: 40px;
+  font-family: var(--font-body);
+  font-size: 1.45rem;
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  padding: 18px 28px 20px;
+  position: relative;
+  opacity: 0.4;
+  animation: heroFadeUp 0.7s ease 0.68s forwards;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='1000' viewBox='0 0 340 80'%3E%3Cpath d='M12,38 C8,32 6,26 10,22 C20,15 40,13 65,12 C95,10 130,9 165,9 C200,9 240,10 270,13 C295,15 318,20 330,25 C338,29 340,36 336,43 C332,51 318,58 295,63 C270,68 235,72 200,73 C165,74 125,74 90,72 C60,70 32,64 18,58 C10,54 8,46 12,38 Z' fill='%236A1E55' opacity='0.92'/%3E%3Cpath d='M18,40 C14,34 13,28 17,24 C26,17 46,15 72,14 C102,12 138,11 170,11 C202,11 238,12 265,15 C288,17 310,22 322,27 C330,31 332,38 328,45 C324,53 310,60 288,65 C264,69 228,72 192,73 C156,74 116,73 82,71 C52,69 26,63 14,56 C7,52 6,44 18,40 Z' fill='%236A1E55' opacity='0.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
 }

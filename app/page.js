@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 // ─── Scroll Animation Hook ───────────────────────────────────────────────────
@@ -70,7 +70,6 @@ function Navbar() {
           Yousuf Tahir
         </button>
 
-        {/* Desktop links */}
         <ul className={styles.navLinks}>
           {links.map((link) => (
             <li key={link}>
@@ -84,7 +83,6 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* Mobile hamburger */}
         <button
           className={`${styles.hamburger} ${menuOpen ? styles.hamburgerOpen : ""}`}
           onClick={() => setMenuOpen((v) => !v)}
@@ -96,7 +94,6 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Mobile dropdown */}
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
         {links.map((link) => (
           <button
@@ -119,11 +116,8 @@ function Hero() {
 
   return (
     <section id="home" className={styles.hero}>
-      {/* Background grid overlay */}
       <div className={styles.heroGrid} aria-hidden="true" />
-      {/* Accent glow blob */}
       <div className={styles.heroGlow} aria-hidden="true" />
-
       <div className={styles.heroContent}>
         <p className={styles.heroEyebrow}>Hello, I&apos;m</p>
         <h1 className={styles.heroName}>Yousuf Tahir</h1>
@@ -146,6 +140,10 @@ function Hero() {
             Contact Me
           </button>
         </div>
+
+        <p className={styles.heroQuote}>
+          &ldquo;Nothing is never<br />Not worth trying&rdquo;
+        </p>
       </div>
     </section>
   );
@@ -158,9 +156,7 @@ function About() {
       <div className={styles.sectionInner}>
         <div className={styles.sectionLabel} data-reveal>About</div>
         <h2 className={styles.sectionTitle} data-reveal>Who I Am</h2>
-
         <div className={styles.aboutGrid}>
-          {/* Left: text */}
           <div className={styles.aboutText} data-reveal>
             <p className={styles.aboutParagraph}>
               I&apos;m a Full‑Stack Developer based in Pakistan with a deep passion
@@ -182,7 +178,6 @@ function About() {
               always building, and always looking for the next meaningful problem
               to solve.
             </p>
-
             <div className={styles.aboutStats}>
               {[
                 { val: "3+", label: "Projects Shipped" },
@@ -197,7 +192,6 @@ function About() {
             </div>
           </div>
 
-          {/* Right: identity card */}
           <div className={styles.aboutCard} data-reveal>
             <div className={styles.aboutCardInner}>
               <div className={styles.avatarRing}>
@@ -260,7 +254,6 @@ function Skills() {
         <p className={styles.sectionSubtitle} data-reveal>
           Technologies I use to design, build, and ship production‑ready applications.
         </p>
-
         <div className={styles.skillsGrid}>
           {Object.entries(skillsData).map(([category, skills], ci) => (
             <div
@@ -344,7 +337,6 @@ function Projects() {
         <p className={styles.sectionSubtitle} data-reveal>
           Real products built and shipped — solving real problems.
         </p>
-
         <div className={styles.projectsGrid}>
           {projectsData.map((project, i) => (
             <div
@@ -357,16 +349,13 @@ function Projects() {
                 <span className={styles.projectNumber}>{project.number}</span>
                 <span className={styles.projectTag}>{project.tag}</span>
               </div>
-
               <h3 className={styles.projectTitle}>{project.title}</h3>
               <p className={styles.projectDesc}>{project.description}</p>
-
               <div className={styles.projectStack}>
                 {project.stack.map((tech) => (
                   <span key={tech} className={styles.techPill}>{tech}</span>
                 ))}
               </div>
-
               <div className={styles.projectLinks}>
                 <a
                   href={project.github}
@@ -406,16 +395,43 @@ function Projects() {
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
-    setForm({ name: "", email: "", message: "" });
+  const handleSubmit = async () => {
+    if (!form.name || !form.email || !form.message) {
+      setErrorMsg("Please fill in all fields.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus("success");
+        setForm({ name: "", email: "", message: "" });
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setErrorMsg(data.error || "Something went wrong.");
+        setStatus("error");
+      }
+    } catch (err) {
+      setErrorMsg("Network error. Please try again.");
+      setStatus("error");
+    }
   };
 
   return (
@@ -446,8 +462,8 @@ function Contact() {
                     </svg>
                   ),
                   label: "Email",
-                  val: "yousuftahir@email.com",
-                  href: "mailto:yousuftahir@email.com",
+                  val: "yousuf.tahir000@gmail.com",
+                  href: "mailto:yousuf.tahir000@gmail.com?subject=Project%20Inquiry%20from%20Portfolio&body=Hi%20Yousuf%2C%0A%0AI%20came%20across%20your%20portfolio%20and%20wanted%20to%20reach%20out%20about...",
                 },
                 {
                   icon: (
@@ -457,8 +473,8 @@ function Contact() {
                     </svg>
                   ),
                   label: "LinkedIn",
-                  val: "linkedin.com/in/yousuftahir",
-                  href: "https://linkedin.com/in/yousuftahir",
+                  val: "linkedin.com/in/yousuf-tahir",
+                  href: "https://linkedin.com/in/yousuf-tahir-ab5527320",
                 },
                 {
                   icon: (
@@ -467,8 +483,8 @@ function Contact() {
                     </svg>
                   ),
                   label: "GitHub",
-                  val: "github.com/yousuftahir",
-                  href: "https://github.com/yousuftahir",
+                  val: "github.com/yousuf-tahir",
+                  href: "https://github.com/yousuf-tahir",
                 },
               ].map((item) => (
                 <a
@@ -490,7 +506,7 @@ function Contact() {
 
           {/* Right: Form */}
           <div className={styles.contactForm} data-reveal>
-            {sent ? (
+            {status === "success" ? (
               <div className={styles.successMsg}>
                 <span className={styles.successIcon}>✓</span>
                 <p>Message sent! I&apos;ll get back to you soon.</p>
@@ -506,6 +522,7 @@ function Contact() {
                     onChange={handleChange}
                     placeholder="Your name"
                     className={styles.formInput}
+                    disabled={status === "loading"}
                   />
                 </div>
                 <div className={styles.formGroup}>
@@ -517,6 +534,7 @@ function Contact() {
                     onChange={handleChange}
                     placeholder="your@email.com"
                     className={styles.formInput}
+                    disabled={status === "loading"}
                   />
                 </div>
                 <div className={styles.formGroup}>
@@ -528,11 +546,30 @@ function Contact() {
                     placeholder="Tell me about your project..."
                     className={styles.formTextarea}
                     rows={5}
+                    disabled={status === "loading"}
                   />
                 </div>
-                <button className={styles.btnPrimary} onClick={handleSubmit}>
-                  Send Message
-                  <span className={styles.btnArrow}>→</span>
+
+                {status === "error" && (
+                  <p className={styles.formError}>{errorMsg}</p>
+                )}
+
+                <button
+                  className={`${styles.btnPrimary} ${status === "loading" ? styles.btnLoading : ""}`}
+                  onClick={handleSubmit}
+                  disabled={status === "loading"}
+                >
+                  {status === "loading" ? (
+                    <>
+                      <span className={styles.spinner} />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <span className={styles.btnArrow}>→</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}
@@ -552,19 +589,42 @@ function Footer() {
         <p className={styles.footerBuilt}>Built with Next.js &amp; CSS Modules</p>
         <div className={styles.footerSocials}>
           {[
-            { href: "https://github.com/yousuf-tahir", label: "GitHub",
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            {
+              href: "https://github.com/yousuf-tahir",
+              label: "GitHub",
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+              ),
             },
-            { href: "https://linkedin.com/in/yousuf-tahir-ab5527320", label: "LinkedIn",
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            {
+              href: "https://linkedin.com/in/yousuf-tahir-ab5527320",
+              label: "LinkedIn",
+              icon: (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                  <rect x="2" y="9" width="4" height="12"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
+              ),
             },
           ].map((s) => (
-            <a key={s.label} href={s.href} className={styles.footerSocialIcon} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+            <a
+              key={s.label}
+              href={s.href}
+              className={styles.footerSocialIcon}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={s.label}
+            >
               {s.icon}
             </a>
           ))}
         </div>
-        <p className={styles.footerCopy}>© {new Date().getFullYear()} Yousuf Tahir. All rights reserved.</p>
+        <p className={styles.footerCopy}>
+          © {new Date().getFullYear()} Yousuf Tahir. All rights reserved.
+        </p>
       </div>
     </footer>
   );
