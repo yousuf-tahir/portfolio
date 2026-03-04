@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import styles from "../page.module.css";
+import styles from "./page.module.css";
 
 // ─── Scroll Animation Hook ───────────────────────────────────────────────────
 function useScrollReveal() {
